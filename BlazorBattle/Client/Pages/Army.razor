@@ -1,7 +1,12 @@
 ﻿@page "/army"
 @inject IUnitService UnitService
+@attribute [Authorize]
 
 <h3>My Army</h3>
+
+
+@if(UnitService.Units.Count > 0)
+{
 <table class="table">
     @foreach (var userUnits in UnitService.MyUnits)
     {
@@ -9,9 +14,15 @@
             <td>
                 @switch (userUnits.UnitId)
                 {
-                    case 1:<img src="icons/knight.png" />break;
-                    case 2: <img src="icons/archer.png" />break;
-                    case 3: <img src="icons/mage.png" />break;
+                    case 1:
+                        <img src="icons/knight.png" />
+                        break;
+                    case 2:
+                        <img src="icons/archer.png" />
+                        break;
+                    case 3:
+                        <img src="icons/mage.png" />
+                        break;
                 }
             </td>
             <td>
@@ -23,10 +34,17 @@
         </tr>
 
     }
-
-
-
-</table>
+    </table>
+}
+else
+{
+    <span>Loading Units</span>
+}
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        await UnitService.LoadUnitsAsync();
+    }
 
-                }
+
+      }

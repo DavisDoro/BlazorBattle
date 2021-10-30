@@ -2,20 +2,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace BlazorBattle.Client.Services
 {
     public class UnitService : IUnitService
+
     {
-        public IList<Unit> Units => new List<Unit>
+        private readonly HttpClient _http;
+        public UnitService(HttpClient http)
         {
-            new Unit { Id =1, Title = "Knight", Attack = 10, Defense = 10, BananaCost = 100},
-            new Unit { Id =2, Title = "Archer", Attack = 15, Defense = 5, BananaCost = 150},
-            new Unit { Id =3, Title = "Mage", Attack = 20, Defense = 1, BananaCost = 200}
-        };
+            _http = http;
+        }
+        public IList<Unit> Units { get; set; } = new List<Unit>();
 
         public IList<UserUnit> MyUnits { get; set; } = new List<UserUnit>();
+
+
 
         //IList<Unit> IUnitService.Units { get; set; }
 
@@ -26,6 +31,15 @@ namespace BlazorBattle.Client.Services
 
             //Console.WriteLine($"{unit.Title} was built!");
             //Console.WriteLine($"Your army size: {MyUnits.Count}");
+        }
+
+        public async Task LoadUnitsAsync()
+        {
+            if (Units.Count == 0)
+            {
+                Units = await _http.GetFromJsonAsync<IList<Unit>>("api/Unit");
+
+            }
         }
     }
 }
